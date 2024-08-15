@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Ambika</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header, footer {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5em 1em;
+        }
+        main {
+            padding: 2em;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, button, select {
+            margin-bottom: 1em;
+        }
+        button {
+            padding: 0.5em;
+            border: none;
+            background-color: #a86e47;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #8a4b2b;
+        }
+        img.hidden {
+            display: none;
+        }
+        .orders, .admin-actions, .placed-orders, .completed-orders {
+            margin-top: 2em;
+        }
+        .order-item {
+            border-bottom: 1px solid #ddd;
+            padding: 1em 0;
+        }
+        .welcome-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .welcome-image {
+            max-width: 70%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .welcome-container h1 {
+            font-size: 2.5em;
+            margin-bottom: 1em;
+        }
+        .welcome-container button {
+            padding: 0.75em 1.5em;
+            font-size: 1.2em;
+        }
+        .login-images {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5em;
+        }
+        .login-image {
+            width: 20%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hotel Ambika</h1>
+        <nav>
+            <a href="#" id="login-link">Login</a>
+            <a href="#" id="admin-link">Admin Panel</a>
+        </nav>
+    </header>
+    <main>
+        <div id="main-content" class="container">
+
+            <!-- Welcome Page -->
+            <div id="welcome-page" class="welcome-container">
+                <img src="https://i.ibb.co/HxKWcgb/Whats-App-Image-2024-08-13-at-10-58-47-PM-1.jpg" alt="Hotel Ambika" class="welcome-image">
+                <h1>WELCOME TO HOTEL AMBIKA</h1>
+                <h3>Andarsul, Tal:-Yeola, Dist:-Nashik (423402)</h3>
+                <button onclick="goToLoginPage()">Get Started</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form" class="container" style="display: none;">
+                <div class="login-images">
+                    <img src="https://www.pngkey.com/png/detail/251-2510994_savithri-catering-has-been-established-for-over-10.png" alt="Hotel Ambika" class="login-image">
+                    <h1>Login Page</h1>
+                    <img src="https://restro.smarttechsoft.in/wp-content/uploads/2022/09/veg-thali-1.png" alt="Hotel Ambika" class="login-image">
+                </div>
+                <form onsubmit="handleLogin(event)">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                    <label for="role">Role:</label>
+                    <select id="role">
+                        <option value="customer">Customer</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+
+            <!-- Customer Ordering -->
+            <div id="customer-page" class="container" style="display: none;">
+                <h2>Order Food</h2>
+                <button onclick="showCustomerDetails()">Customer Details</button>
+                <div id="menu"></div>
+                <div id="cart"></div>
+                <div id="order-form" style="display: none;">
+                    <h3>Place Order</h3>
+                    <form onsubmit="handleOrder(event)">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" required>
+                        <label for="address">Address:</label>
+                        <input type="text" id="address" required>
+                        <label for="mobile">Mobile:</label>
+                        <input type="text" id="mobile" required>
+                        <button type="submit">Place Order</button>
+                    </form>
+                </div>
+                <div id="placed-orders" class="placed-orders" style="display: none;">
+                    <h3>Placed Orders</h3>
+                    <div id="placed-orders-list"></div>
+                    <button onclick="clearPlacedOrders()">Clear Placed Orders</button>
+                </div>
+            </div>
+
+            <!-- Customer Details Section -->
+            <div id="customer-details" class="container" style="display: none;">
+                <h2>Customer Details</h2>
+                <button onclick="backToShopping()">Back to Shopping</button>
+                <form onsubmit="handleSaveDetails(event)">
+                    <label for="customer-email">Email:</label>
+                    <input type="email" id="customer-email" readonly>
+                    <label for="customer-name">Name:</label>
+                    <input type="text" id="customer-name" required>
+                    <label for="customer-mobile">Mobile:</label>
+                    <input type="text" id="customer-mobile" required>
+                    <label for="photo-upload">Upload Photo:</label>
+                    <input type="file" id="photo-upload" accept="image/*" onchange="previewImage(event)">
+                    <img id="photo-preview" class="hidden" style="width: 150px; height: auto;">
+                    <button type="submit">Save</button>
+                    <button type="button" onclick="handleUpdateDetails()">Update</button>
+                </form>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="admin-panel" class="container" style="display: none;">
+                <h2>Admin Panel</h2>
+                <div class="admin-actions">
+                    <h3>Add New Item</h3>
+                    <form onsubmit="handleAddItem(event)">
+                        <label for="item-name">Item Name:</label>
+                        <input type="text" id="item-name" required>
+                        <label for="item-price">Price:</label>
+                        <input type="number" id="item-price" required>
+                        <button type="submit">Add Item</button>
+                    </form>
+                </div>
+                <div class="orders">
+                    <h3>Orders</h3>
+                    <div id="orders-list"></div>
+                </div>
+                <div class="completed-orders" style="margin-top: 2em;">
+                    <h3>Completed Orders</h3>
+                    <div id="completed-orders-list"></div>
+                    <button onclick="clearCompletedOrders()">Clear Completed Orders</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Food Order Website</p>
+    </footer>
+    <script>
+        // Retrieve data from localStorage
+        const getFromLocalStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
+        const saveToLocalStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
+
+        // Initialize data
+        let menuu = getFromLocalStorage('menuu');
+        let orders = getFromLocalStorage('orders');
+        let completedOrders = getFromLocalStorage('completedOrders');
+        let cart = getFromLocalStorage('cart');
+        let customerDetails = getFromLocalStorage('customerDetails') || {};
+
+        // Simulate data if not available
+        if (menuu.length === 0) {
+            menuu = [
+            { name: 'Shahi Paneer', price: 220 },
+    { name: 'Paneer Malai Kofta', price: 220 },
+    { name: 'Paneer Kaju Masala', price: 220 },
+    { name: 'Kaju Curry', price: 180 },
+    { name: 'Shev Bhaji Black', price: 120 },
+    { name: 'Mutter Paneer', price: 150 },
+    { name: 'Shev Bhaji Red', price: 90 },
+    { name: 'Aloo Mutter', price: 100 },
+    { name: 'Dal Tadka', price: 120 },
+    { name: 'Dal Fry', price: 100 },
+    { name: 'Jeera Aloo', price: 100 },
+    { name: 'Veg Kolhapuri', price: 150 },
+    { name: 'Mix Veg', price: 120 },
+    { name: 'Baingan Masala', price: 100 },
+    { name: 'Lasooni Methi', price: 120 },
+    { name: 'Bhendi Fry', price: 100 },
+    { name: 'Matki Masala', price: 100 },
+    { name: 'Green Salad', price: 70 },
+    { name: 'Veg Kofta', price: 180 },
+    { name: 'Veg Lajawab', price: 160 },
+    { name: 'Paneer Kurmure', price: 220 },
+    { name: 'Paneer Sunana', price: 240 },
+    { name: 'Paneer Lajij', price: 170 },
+    { name: 'Paneer Pasanda', price: 220 },
+    { name: 'Veg Maharaja', price: 220 },
+    { name: 'Paneer Maharaja', price: 180 },
+    { name: 'Paneer Kofta', price: 170 },
+    { name: 'Paneer Angara', price: 180 },
+    { name: 'Paneer Mirch Masala', price: 180 },
+    { name: 'Paneer Amritsari', price: 180 },
+    { name: 'Paneer Tikka', price: 220 },
+    { name: 'Paneer Do Pyaja', price: 200 },
+    { name: 'Veg Maratha', price: 200 },
+    { name: 'Veg Harabhara', price: 180 },
+    { name: 'Chana Koliwada', price: 90 },
+    { name: 'Chana Roast', price: 100 },
+    { name: 'Veg Sik Kabab', price: 170 },
+    { name: 'Veg Bhoona', price: 220 },
+    { name: 'Soyabean Masala', price: 100 },
+    { name: 'Paneer Masala', price: 150 },
+    { name: 'Schezwan Noodles', price: 120 },
+    { name: 'Schezwan Fried Rice', price: 120 },
+    { name: 'Manchurian', price: 120 },
+    { name: 'Soyabean Chilli', price: 120 },
+    { name: 'Manchurian Noodles', price: 150 },
+    { name: 'Manchurian Rice', price: 150 },
+    { name: 'Paneer Chilli', price: 150 },
+    { name: 'Paneer Crispy', price: 150 },
+    { name: 'Paneer 65', price: 180 },
+    { name: 'Aloo 65', price: 150 },
+    { name: 'Paneer Manchurian', price: 170 },
+    { name: 'Chinese Triple Rice', price: [110, 180] }, // Multiple prices
+    { name: 'Veg Manchow Soup', price: 120 },
+    { name: 'Hot & Sour Soup', price: 120 },
+    { name: 'Tomato Soup', price: 120 },
+    { name: 'Bread Butter', price: 120 },
+    { name: 'Sandwich', price: 70 },
+    { name: 'Veg Cheese Sandwich', price: 130 },
+    { name: 'Paneer Momos', price: 90 },
+    { name: 'Fry Papad', price: 20 },
+    { name: 'Masala Papad', price: 35 },
+    { name: 'Roasted Papad', price: 20 },
+    { name: 'Nagili Fry Papad', price: 30 },
+    { name: 'Misal Pav', price: 50 },
+    { name: 'Rassa Vada', price: 40 },
+    { name: 'Bhajiya', price: 25 },
+    { name: 'Vada Pav', price: 10 },
+    { name: 'Batata Vada', price: 15 },
+    { name: 'Water bottle', price: 20 }, // Add appropriate prices if available
+    { name: 'Tea', price: 10 }, // Add appropriate prices if available
+    { name: 'Milk', price: 15 }, // Add appropriate prices if available
+    { name: 'Coffee', price: 15 }, // Add appropriate prices if available
+    { name: 'Butter Milk', price: 20 }, // Add appropriate prices if available
+    { name: 'Cold Drinks', price: 20 }, // Add appropriate prices if available
+    { name: 'Ice Cream', price: 30 }, // Add appropriate prices if available
+    { name: 'Juice', price: 40 } // Add appropriate prices if available
+            ];
+            saveToLocalStorage('menuu', menuu);
+        }
+
+        const updateMenu = () => {
+            const menuContainer = document.getElementById('menu');
+            menuContainer.innerHTML = '<h3>Menu</h3>';
+            menuu.forEach(item => {
+                menuContainer.innerHTML += `
+                    <div>
+                        <h4>${item.name}</h4>
+                        <p>Price: $${item.price}</p>
+                        <button onclick="addToCart('${item.name}')">Add to Cart</button>
+                    </div>
+                `;
+            });
+        };
+
+        const updateCart = () => {
+            const cartContainer = document.getElementById('cart');
+            cartContainer.innerHTML = '<h3>Cart</h3>';
+            if (cart.length === 0) {
+                cartContainer.innerHTML += '<p>No items in the cart.</p>';
+                return;
+            }
+            cart.forEach(item => {
+                cartContainer.innerHTML += `
+                    <div>
+                        <h4>${item.name}</h4>
+                        <p>Price: $${item.price}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('order-form').style.display = 'block';
+        };
+
+        const addToCart = (itemName) => {
+            const item = menuu.find(i => i.name === itemName);
+            if (item) {
+                cart.push(item);
+                saveToLocalStorage('cart', cart);
+                updateCart();
+            }
+        };
+
+        const handleOrder = (event) => {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const mobile = document.getElementById('mobile').value;
+            const order = { name, address, mobile, items: [...cart] };
+            orders.push(order);
+            saveToLocalStorage('orders', orders);
+            cart = [];
+            saveToLocalStorage('cart', cart);
+            updateCart();
+            showPlacedOrders();
+        };
+
+        const showPlacedOrders = () => {
+            const placedOrdersContainer = document.getElementById('placed-orders');
+            placedOrdersContainer.style.display = 'block';
+            const placedOrdersList = document.getElementById('placed-orders-list');
+            placedOrdersList.innerHTML = '';
+            orders.forEach((order, index) => {
+                placedOrdersList.innerHTML += `
+                    <div class="order-item">
+                        <h4>Order #${index + 1}</h4>
+                        <p>Name: ${order.name}</p>
+                        <p>Address: ${order.address}</p>
+                        <p>Mobile: ${order.mobile}</p>
+                        <h5>Items:</h5>
+                        ${order.items.map(item => `<p>${item.name} - $${item.price}</p>`).join('')}
+                    </div>
+                `;
+            });
+        };
+
+        const clearPlacedOrders = () => {
+            if (confirm('Are you sure you want to clear all placed orders?')) {
+                orders = [];
+                saveToLocalStorage('orders', orders);
+                showPlacedOrders();
+            }
+        };
+
+        const handleLogin = (event) => {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            // Add login handling logic here
+            document.getElementById('login-form').style.display = 'none';
+            if (role === 'customer') {
+                document.getElementById('customer-page').style.display = 'block';
+                updateMenu();
+                updateCart();
+            } else if (role === 'admin') {
+                document.getElementById('admin-panel').style.display = 'block';
+                showOrders();
+            }
+        };
+
+        const showOrders = () => {
+            const ordersList = document.getElementById('orders-list');
+            ordersList.innerHTML = '';
+            orders.forEach((order, index) => {
+                ordersList.innerHTML += `
+                    <div class="order-item">
+                        <h4>Order #${index + 1}</h4>
+                        <p>Name: ${order.name}</p>
+                        <p>Address: ${order.address}</p>
+                        <p>Mobile: ${order.mobile}</p>
+                        <h5>Items:</h5>
+                        ${order.items.map(item => `<p>${item.name} - $${item.price}</p>`).join('')}
+                        <button onclick="completeOrder(${index})">Complete</button>
+                    </div>
+                `;
+            });
+        };
+
+        const completeOrder = (index) => {
+            const completedOrder = orders.splice(index, 1)[0];
+            completedOrders.push(completedOrder);
+            saveToLocalStorage('orders', orders);
+            saveToLocalStorage('completedOrders', completedOrders);
+            showOrders();
+            showCompletedOrders();
+        };
+
+        const showCompletedOrders = () => {
+            const completedOrdersList = document.getElementById('completed-orders-list');
+            completedOrdersList.innerHTML = '';
+            completedOrders.forEach((order, index) => {
+                completedOrdersList.innerHTML += `
+                    <div class="order-item">
+                        <h4>Order #${index + 1}</h4>
+                        <p>Name: ${order.name}</p>
+                        <p>Address: ${order.address}</p>
+                        <p>Mobile: ${order.mobile}</p>
+                        <h5>Items:</h5>
+                        ${order.items.map(item => `<p>${item.name} - $${item.price}</p>`).join('')}
+                    </div>
+                `;
+            });
+        };
+
+        const clearCompletedOrders = () => {
+            if (confirm('Are you sure you want to clear all completed orders?')) {
+                completedOrders = [];
+                saveToLocalStorage('completedOrders', completedOrders);
+                showCompletedOrders();
+            }
+        };
+
+        const handleAddItem = (event) => {
+            event.preventDefault();
+            const name = document.getElementById('item-name').value;
+            const price = document.getElementById('item-price').value;
+            menuu.push({ name, price });
+            saveToLocalStorage('menuu', menuu);
+            updateMenu();
+        };
+
+        const showCustomerDetails = () => {
+            document.getElementById('customer-details').style.display = 'block';
+            document.getElementById('customer-email').value = localStorage.getItem('email') || '';
+            document.getElementById('customer-name').value = customerDetails.name || '';
+            document.getElementById('customer-mobile').value = customerDetails.mobile || '';
+        };
+
+        const handleSaveDetails = (event) => {
+            event.preventDefault();
+            const name = document.getElementById('customer-name').value;
+            const mobile = document.getElementById('customer-mobile').value;
+            customerDetails = { name, mobile };
+            saveToLocalStorage('customerDetails', customerDetails);
+            alert('Details saved successfully!');
+        };
+
+        const handleUpdateDetails = () => {
+            handleSaveDetails();
+        };
+
+        const backToShopping = () => {
+            document.getElementById('customer-details').style.display = 'none';
+        };
+
+        const previewImage = (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = document.getElementById('photo-preview');
+                img.src = reader.result;
+                img.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        const goToLoginPage = () => {
+            document.getElementById('welcome-page').style.display = 'none';
+            document.getElementById('login-form').style.display = 'block';
+        };
+
+        const showAdminPanel = () => {
+            document.getElementById('admin-panel').style.display = 'block';
+            showOrders();
+        };
+    </script>
+</body>
+</html>
